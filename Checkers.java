@@ -12,21 +12,27 @@ public class Checkers extends JPanel
 {
 
 	public static final int FRAME_SIZE = 720;
-
-
+	public static final int ROWSHIFT= 80;
+	public static final  int COLSHIFT=40;
+	
+	
 	public static void main(String[] args) 
 	{
 		
 		
 		JFrame frame=new JFrame("Checkers!");
-		frame.setSize(FRAME_SIZE, FRAME_SIZE);
+		frame.setSize(FRAME_SIZE+2*ROWSHIFT, FRAME_SIZE+2*COLSHIFT);
 		
 		
 		frame.setLocationRelativeTo(null);
 		Board panel = new Board();
-		panel.setLocation(200 ,200 );
+		panel.setLocation(0 ,0);
 		frame.add(panel);
+		
+		
+	
 		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		
 
@@ -37,20 +43,12 @@ public class Checkers extends JPanel
 
 	public Checkers() 
 	{
-		/*
-		setLayout(null);
-		setPreferredSize(new Dimension(500, 500));
-		setBackground(Color.blue);
-		*/
-		Board board= new Board();
 		
-		add(board);
-		//add(newGameButton);
-		
-		
-		//board.setBounds(20,20,164,164);
-		//newGameButton.setBounds(210,60,120,30);
-		//message.setBounds(0,200,350,30);
+//		Board board= new Board();
+//		
+//		add(board);
+//		
+//		
 		
 	}//end of connstructor
 	

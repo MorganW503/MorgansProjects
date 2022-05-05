@@ -21,44 +21,33 @@ public class CheckersData extends JPanel
 	{
 		board =new int [8][8];
 		setupGame();
-		
 	}
 	
 	
 	
 	//setting up the game
-	void setupGame() 
+	static final void setupGame() 
 	{
-		
-		
-		
 			for (int col=0; col<8;col++) 
 			{
 				for (int row=0; row<8;row++) 
 				{
-					
 					if ((row+col)%2==0)
 					{
-						
-						
 						if(col<3) 
 						{
 							board[row][col]=RED;
-							
 						}
 						
 						else if (col>4) 
 						{
 							board[row][col]=BLACK;
-						
 						}
 						else
 						{
 							board[row][col]=EMPTY;
 						}
-						
 					}
-					
 					else 
 					{
 					board[row][col]=EMPTY;
@@ -130,16 +119,13 @@ public class CheckersData extends JPanel
 		}
 		if (board[r2][c2] !=EMPTY) //check if space is taken
 		{
-			
 			return (false);
 		}
-		
-
-		if (player== RED) //Red player
+		if (player== board[r1][c1]) //Red player
 		{				//
-			if (board[r1][c1]==RED && c1<c2 && Math.abs(r2-r1)==2 && Math.abs(c2-c1)==2 )
+			if ((board[r1][c1]==RED && c1<c2)||(board[r1][c1]==BLACK&& c1>c2)&& Math.abs(r2-r1)==2 && Math.abs(c2-c1)==2 )
 			{
-				if (board[r3][c3]==RED||board[r3][c3]==EMPTY) 
+				if (board[r3][c3]==player||board[r3][c3]==player+1||board[r3][c3]==EMPTY) 
 				{
 					return false;
 				}
@@ -153,24 +139,22 @@ public class CheckersData extends JPanel
 				return false;
 			}
 		}
-		else // Black Player
+		else if (board[r1][c1]==player+1) 
+		{											//check that the piece is moving the right way
+			if (board[r3][c3]==player||board[r3][c3]==player+1||board[r3][c3]==EMPTY) 
+			{
+				return false;
+			}
+			else 
+			{
+			return true;
+			}
+		}
+		else 
 		{
-			if (board[r1][c1]==BLACK && c1>c2 && Math.abs(r2-r1)==2 && Math.abs(c2-c1)==2) 
-			{											//check that the piece is moving the right way
-				if (board[r3][c3]==BLACK||board[r3][c3]==EMPTY) 
-				{
-					return false;
-				}
-				else 
-				{
-				return true;
-				}
-			}
-			else 
-			{
-				return false;
-			}
+			return false;
 		}
+		
 	}//END CAN JUMP CHECK
 	
 	//check to see if it cam move
@@ -188,17 +172,15 @@ public class CheckersData extends JPanel
 		
 		
 		else
-		{
-			if (player==RED) //Red player
-			{				//
-				if (board[r1][c1]==RED && c1<c2 && Math.abs(r2-r1)==1 && Math.abs(c2-c1)==1 )
+		{				
+				if(( (board[r1][c1]==RED&& c1<c2) || (board[r1][c1]==BLACK && c1>c2) )  && Math.abs(r2-r1)==1 && Math.abs(c2-c1)==1 )
 				{
 				
 					return true;
 					
 				}
 				
-				if(board[r1][c1]==REDKING && Math.abs(r2-r1)==1 && Math.abs(c2-c1)==1)
+				if(board[r1][c1]==REDKING||board[r1][c1]==BLACKKING && Math.abs(r2-r1)==1 && Math.abs(c2-c1)==1)
 				{
 					return true;
 				}
@@ -207,23 +189,6 @@ public class CheckersData extends JPanel
 					return false;
 				}
 			}
-			else // Black Player
-			{
-				if (board[r1][c1]==BLACK && c1>c2 && Math.abs(r2-r1)==1 && Math.abs(c2-c1)==1) 
-				{											//check that the piece is moving the right way
-															// black moves up
-					return true;
-				}
-				if(board[r1][c1]==BLACKKING && Math.abs(r2-r1)==1 && Math.abs(c2-c1)==1)
-				{
-					return true;
-				}
-				else 
-				{
-					return false;
-				}
-			}	
-		}
 			
 			
 			
@@ -234,33 +199,54 @@ public class CheckersData extends JPanel
 	
 	
 	
-	public boolean winCheck(int player)
+	public void winCheck(int player)
 	{
-		int possibleMoves=0;
+		int totalRedMoves=0;
+		int totalBlackMoves=0;
+		int redPieces=0;
+		int blackPieces=0;
+		
 		for (int row=0;row<8;row++)
 		{
 			for(int col=0; col<8;col++)
 			{
-				if (checkMove(player, row, col) )
-				{
-					
-					possibleMoves++;
-				}
-				if (checkJump(player, row, col))
-				{
-					possibleMoves++;
-				}
 				
+				switch (board[row][col])
+				{
+				case RED:
+					redPieces++;
+					totalRedMoves = totalRedMoves+checkMove(player, row, col)
+										+checkJump(player, row, col);
+					break;
+				
+				case BLACK:
+					blackPieces++;
+					totalBlackMoves = totalBlackMoves+checkMove(player, row, col)
+									+checkJump(player, row, col);
+					break;
+				
+				case REDKING:
+					totalRedMoves=totalRedMoves+checkMove(player, row, col);
+					redPieces++;
+					break;
+					
+				case BLACKKING:
+				blackPieces++;
+				totalBlackMoves=totalBlackMoves+checkMove(player, row, col)+checkJump(player, row, col);
+					break;
+					
+				}
 			}
-		}
-		if (possibleMoves>0)
+		}			
+		if (player==BLACK &&(totalBlackMoves==0 || blackPieces==0))
 		{
-			return false;
+			Board.doEndSequence(RED);
 		}
-		else
+		if (player==RED && (totalRedMoves==0||redPieces==0))
 		{
-			return true;
+			Board.doEndSequence(BLACK);
 		}
+		
 		
 		
 	}  //win check
@@ -291,168 +277,122 @@ public class CheckersData extends JPanel
 			return false;
 		}
 	}
-	boolean checkJump(int player,int r1, int c1)
-
+	int checkJump(int player,int r1, int c1)
 	{
+		
 		int jumpsAvailable=0;
-		if (Board.jumpFlag)
+		if (Board.jumpFlag && board[r1][c1]==player||board[r1][c1]==player+2)
 		{
+			
 			if(board[r1][c1]==RED)
 			{
 				if (canJump(player, r1, c1, r1+2, c1+2))
 				{
 					jumpsAvailable++;
-					return true;
+					
 				}
 				if (canJump(player, r1, c1, r1-2, c1+2))
 						
 				{
 					jumpsAvailable++;
-					return true;
+					
 				}
-				else
-				{
-					return false;
-				}
+				
 			}
 			else if (board[r1][c1]== BLACK)
 			{
 				if (canJump(player, r1, c1, r1+2, c1-2))
 				{
 					jumpsAvailable++;
-					return true;
+					
 				}
-				if (canJump(player, r1, c1, r1+2, c1-2))
+				if (canJump(player, r1, c1, r1-2, c1-2))
 						
 				{
 					jumpsAvailable++;
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			else if (board[r1][c1]== BLACKKING)
-			{
-				if (canJump(player, r1, c1, r1+2, c1-2))
-				{
-					jumpsAvailable++;
-					return true;
-				}
-				if (canJump(player, r1, c1, r1+2, c1-2))
-						
-				{
-					jumpsAvailable++;
-					return true;
-				}
-				else
-				{
-					return false;
+					
 				}
 				
 			}
-			else
+			else if (board[r1][c1]== BLACKKING||board[r1][c1]==REDKING)
 			{
-				return false;
+				if (canJump(player, r1, c1, r1+2, c1-2))
+				{
+					jumpsAvailable++;
+					
+				}
+				if (canJump(player, r1, c1, r1+2, c1+2))
+						
+				{
+					jumpsAvailable++;
+					
+				}
+				if (canJump(player, r1, c1, r1-2, c1-2))
+					
+				{
+					jumpsAvailable++;
+					
+				}
+				if (canJump(player, r1, c1, r1-2, c1+2))
+					
+				{
+					jumpsAvailable++;
+					
+				}
 			}
 		}
-		else
-		{
-			return false;
-		}
-		
+		return jumpsAvailable;
 	}// end of checkJump
-	boolean checkMove(int player, int r1, int c1)
+	int checkMove(int player, int r1, int c1)
 	{
 		
-		
-		
-		
-		if(player==RED)
+		int possibleMoves=0;
+		if(board[r1][c1]==RED)
 		{
 			if (canMove(player, r1, c1, r1+1, c1+1))
 			{
-				
-				return true;
+				possibleMoves++;
 			}
 			if (canMove(player, r1, c1, r1-1, c1+1))
-					
 			{
-				
-				return true;
-			}
-			else if (board[r1][c1]==REDKING)	
-			{
-
-					if (canMove(player, r1, c1, r1+1, c1-1))
-					{
-				
-					return true;
-					}
-					
-				
-					else if (canMove(player, r1, c1, r1-1, c1-1))
-					{
-						
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-			}
-			else 
-			{
-				return false;
+				possibleMoves++;
 			}
 		}
-			
-		
-		else if (player==BLACK)
+		else if (board[r1][c1]==BLACK)
 		{
 			if (canMove(player, r1, c1, r1+1, c1-1))
 			{
-				
-				return true;
+				possibleMoves++;
 			}
-			else if (canMove(player, r1, c1, r1+1, c1-1))
+			if (canMove(player, r1, c1, r1-1, c1-1))
 					
 			{
-				
-				return true;
-			}
-			
-			else if (board[r1][c1]==BLACKKING)
-					
-			{
-
-				if (canMove(player, r1, c1, r1+1, c1+1))
-				{
-			
-				return true;
-				}
-				
-			
-				else if (canMove(player, r1, c1, r1-1, c1+1))
-				{
-					
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			else
-			{
-				return false;
+				possibleMoves++;
 			}
 		}
-		else
+		else if (board[r1][c1]==REDKING|| board[r1][c1]==BLACKKING)	
 		{
-			return false;
+				
+					if (canMove(player, r1, c1, r1+1, c1-1))
+					{
+						possibleMoves++;
+					}
+					if (canMove(player, r1, c1, r1-1, c1-1))
+					{
+						possibleMoves++;
+					}
+					if(canMove(player, r1, c1, r1+1, c1+1))
+					{
+						possibleMoves++;
+					}
+					if(canMove(player, r1, c1, r1-1, c1+1))
+					{
+						possibleMoves++;
+					}
+			
 		}
+			
+		return possibleMoves;
 		
 	}// end of checkMove
 	
