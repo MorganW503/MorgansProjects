@@ -108,7 +108,7 @@ public class CheckersData extends JPanel
 	}
 	
 	//check if it can jump
-	boolean canJump(int player, int r1, int c1, int r2, int c2) 
+	static boolean canJump(int player, int r1, int c1, int r2, int c2) 
 	{
 		int r3= (r1+r2)/2;
 		int c3= (c1+c2)/2;
@@ -158,7 +158,7 @@ public class CheckersData extends JPanel
 	}//END CAN JUMP CHECK
 	
 	//check to see if it cam move
-	boolean canMove(int player, int r1, int c1, int r2, int c2) 
+	static boolean canMove(int player, int r1, int c1, int r2, int c2) 
 	{
 		if	(r2<0||r2>7||c2<0||c2>7) //check if its on the board
 		{
@@ -199,40 +199,44 @@ public class CheckersData extends JPanel
 	
 	
 	
-	public void winCheck(int player)
+	public static void winCheck(int player)
 	{
 		int totalRedMoves=0;
 		int totalBlackMoves=0;
 		int redPieces=0;
 		int blackPieces=0;
 		
+		
 		for (int row=0;row<8;row++)
 		{
 			for(int col=0; col<8;col++)
 			{
-				
+				int moves=0;
 				switch (board[row][col])
 				{
 				case RED:
 					redPieces++;
-					totalRedMoves = totalRedMoves+checkMove(player, row, col)
-										+checkJump(player, row, col);
+					moves=checkMove(player, row, col)+checkJump(player, row, col);
+					totalRedMoves = totalRedMoves+moves;
 					break;
 				
 				case BLACK:
 					blackPieces++;
-					totalBlackMoves = totalBlackMoves+checkMove(player, row, col)
-									+checkJump(player, row, col);
+					moves=checkMove(player, row, col)+checkJump(player, row, col);
+					totalBlackMoves = totalBlackMoves+moves;
+							
 					break;
 				
 				case REDKING:
-					totalRedMoves=totalRedMoves+checkMove(player, row, col);
+					moves=checkMove(player, row, col)+checkJump(player, row, col);
+					totalRedMoves = totalRedMoves+moves;
 					redPieces++;
 					break;
 					
 				case BLACKKING:
 				blackPieces++;
-				totalBlackMoves=totalBlackMoves+checkMove(player, row, col)+checkJump(player, row, col);
+				moves=checkMove(player, row, col)+checkJump(player, row, col);
+				totalBlackMoves = totalBlackMoves+moves;
 					break;
 					
 				}
@@ -277,7 +281,7 @@ public class CheckersData extends JPanel
 			return false;
 		}
 	}
-	int checkJump(int player,int r1, int c1)
+	static int checkJump(int player,int r1, int c1)
 	{
 		
 		int jumpsAvailable=0;
@@ -343,7 +347,7 @@ public class CheckersData extends JPanel
 		}
 		return jumpsAvailable;
 	}// end of checkJump
-	int checkMove(int player, int r1, int c1)
+	static int checkMove(int player, int r1, int c1)
 	{
 		
 		int possibleMoves=0;

@@ -52,10 +52,11 @@ public class Board extends JPanel implements MouseListener  , ActionListener
 		setBackground(Color.gray);
 		addMouseListener(this);
 		message=new JLabel(" ", JLabel.CENTER);
-		winMessage=new JLabel (" ");
-		winMessage.setFont(new Font("Sefir", Font.BOLD, 40));
 		message.setFont(new Font ("Sefir",Font.BOLD, 14));
 		message.setForeground(Color.green);
+		winMessage=new JLabel (" ", JLabel.CENTER);
+		winMessage.setFont(new Font("Sefir", Font.BOLD, 60));
+		
 		board = new CheckersData();
 		
 		JButton newGameButton =new JButton ("New Game");
@@ -266,6 +267,7 @@ public class Board extends JPanel implements MouseListener  , ActionListener
 			{
 				System.out.println(" can move");
 				board.doMove(selectedRow, selectedCol, row, col);
+				CheckersData.winCheck(currentPlayer);
 				if (!board.checkKing(row, col))
 				{
 					message.setText("you have moved your piece from "+ selectedRow +" , " + selectedCol + " to " + row +" , "+ col);
