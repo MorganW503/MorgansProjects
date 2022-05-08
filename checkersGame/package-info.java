@@ -1,0 +1,8 @@
+/**
+ * 
+ */
+/**
+ * @author morganwiedensmith
+ *
+ */
+package checkersGame;
